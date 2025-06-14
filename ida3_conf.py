@@ -1,15 +1,26 @@
 # ida3_conf.py
 
-# Forecast target
+# --- Modeling & Feature Strategy ---
+MODELING_STRATEGY = 'delta'
+DELTA_BASE_COLUMN = 'ida1'
 TARGET_COLUMN = "ida3"
 
-# Date of forecast (2025-06-13 12:00 to 00:00)
+# --- NEW: Quantiles for Prediction Intervals ---
+# Note: Corrected the duplicate 0.75
+QUANTILES = [0.05, 0.25, 0.50, 0.75, 0.95]
+
+# --- Advanced Modeling Switches ---
+ENABLE_HPO = False # Set to True to FIND and SAVE the best params.
+ENABLE_RESIDUAL_FITTING = True 
+
+# --- File to store HPO results ---
+HPO_RESULTS_FILE = "best_hpo_params.json"
+
+# --- Forecast Date ---
 FORECAST_DATE = "2025-06-13"
-FORECAST_HOURS = 12
-FREQ = "15T"
 N_PREDICT = 48
 
-# We ONLY include features that are KNOWN for the future forecast period.
+# --- Feature Engineering Lists ---
 NUMERIC_FEATURES = [
     "dam", "idcth", "idcth_liq", "idctqh", "idctqh_liq",
     "idc3h", "idc3h_vol", "idc3qh", "idc3qh_vol",
@@ -18,16 +29,10 @@ NUMERIC_FEATURES = [
     "temp_2", "irradiation_2",
     "net_load_prog"
 ]
-
-# --- CORRECTED: Reduced lag/window sizes for small dataset ---
+USE_LAG_FEATURES = True
 LAG_FEATURES = ["ida3", "ida3_vol", "net_load", "dam", "ida1", "ida2"]
-# Max lag is now 24 steps (6 hours) instead of 48
-LAG_STEPS = [1, 2, 4, 8, 12, 16, 24] 
-
+LAG_STEPS = [1, 2, 4, 8, 12, 16, 24, 48] 
 USE_ROLLING_FEATURES = True
 ROLLING_FEATURES_COLS = ['ida1', 'ida2', 'net_load', 'dam']
-# Max window is now 24 steps (6 hours) instead of 48
-ROLLING_WINDOW_SIZES = [4, 8, 12, 24]
-
+ROLLING_WINDOW_SIZES = [4, 8, 16, 24, 48] 
 USE_DATE_FEATURES = True
-ENABLE_HPO = False
